@@ -92,5 +92,34 @@ int main() {
     movimento_bispo();
     movimento_rainha();
 
+// Função para simular o movimento do Cavalo
+void mover_cavalo(int x, int y) {
+    printf("Movimento do Cavalo a partir de (%d, %d):\n", x, y);
+
+    // Movimentos possíveis do Cavalo em "L"
+    int movimentos[8][2] = {
+        {2, 1}, {2, -1}, {-2, 1}, {-2, -1},  // Movimentos de 2 casas na vertical e 1 na horizontal
+        {1, 2}, {1, -2}, {-1, 2}, {-1, -2}   // Movimentos de 1 casa na vertical e 2 na horizontal
+    };
+
+    // Loop aninhado para percorrer todos os movimentos possíveis
+    for (int i = 0; i < 8; i++) {
+        int novo_x = x + movimentos[i][0];
+        int novo_y = y + movimentos[i][1];
+
+        // Verifica se a nova posição está dentro dos limites do tabuleiro
+        if (novo_x >= 0 && novo_x < TAMANHO_TABULEIRO && novo_y >= 0 && novo_y < TAMANHO_TABULEIRO) {
+            printf("Cavalo move para (%d, %d)\n", novo_x, novo_y);
+        }
+    }
+}
+
+int main() {
+    int x = 3, y = 3;  // Posição inicial do Cavalo (por exemplo, no centro do tabuleiro)
+
+    // Movimento do Cavalo
+    mover_cavalo(x, y);
+
     return 0;
 }
+ 
