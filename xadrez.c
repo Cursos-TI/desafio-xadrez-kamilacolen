@@ -1,125 +1,95 @@
 #include <stdio.h>
 
-void movimento_torre() {
-    int i;
+#define TAM 8
 
-    // Movimento vertical para cima
-    printf("Movimento da Torre (Vertical para cima):\n");
-    for(i = 1; i <= 8; i++) {
-        printf("Casa %d, %d\n", i, 1);
-    }
+// Função Recursiva para o movimento da Torre
+void movimentoTorre(int x, int y, int direcao, int tabuleiro[TAM][TAM]) {
+    if (x < 0 || x >= TAM || y < 0 || y >= TAM || tabuleiro[x][y] == 1)
+        return;
+    
+    // Marca a posição atual como ocupada
+    tabuleiro[x][y] = 1;
+    printf("Torre em: (%d, %d)\n", x, y);
 
-    // Movimento vertical para baixo
-    printf("\nMovimento da Torre (Vertical para baixo):\n");
-    for(i = 8; i >= 1; i--) {
-        printf("Casa %d, %d\n", i, 1);
-    }
-
-    // Movimento horizontal para a direita
-    printf("\nMovimento da Torre (Horizontal para direita):\n");
-    for(i = 1; i <= 8; i++) {
-        printf("Casa %d, %d\n", 1, i);
-    }
-
-    // Movimento horizontal para a esquerda
-    printf("\nMovimento da Torre (Horizontal para esquerda):\n");
-    for(i = 8; i >= 1; i--) {
-        printf("Casa %d, %d\n", 1, i);
+    if (direcao == 0) { // Movendo para a direita
+        movimentoTorre(x, y + 1, direcao, tabuleiro);
+    } else if (direcao == 1) { // Movendo para baixo
+        movimentoTorre(x + 1, y, direcao, tabuleiro);
+    } else if (direcao == 2) { // Movendo para a esquerda
+        movimentoTorre(x, y - 1, direcao, tabuleiro);
+    } else if (direcao == 3) { // Movendo para cima
+        movimentoTorre(x - 1, y, direcao, tabuleiro);
     }
 }
 
-void movimento_bispo() {
-    int i = 1;
+// Função Recursiva para o movimento do Bispo com Loops Aninhados
+void movimentoBispo(int x, int y, int direcaoX, int direcaoY, int tabuleiro[TAM][TAM]) {
+    if (x < 0 || x >= TAM || y < 0 || y >= TAM || tabuleiro[x][y] == 1)
+        return;
+    
+    // Marca a posição atual como ocupada
+    tabuleiro[x][y] = 1;
+    printf("Bispo em: (%d, %d)\n", x, y);
 
-    // Movimento diagonal para cima e direita
-    printf("Movimento do Bispo (Diagonal para cima e direita):\n");
-    while(i <= 8) {
-        printf("Casa %d, %d\n", i, i);
-        i++;
-    }
-
-    i = 1;
-    // Movimento diagonal para baixo e direita
-    printf("\nMovimento do Bispo (Diagonal para baixo e direita):\n");
-    while(i <= 8) {
-        printf("Casa %d, %d\n", 9 - i, i);
-        i++;
-    }
+    movimentoBispo(x + direcaoX, y + direcaoY, direcaoX, direcaoY, tabuleiro);
 }
 
-void movimento_rainha() {
-    int i = 1;
+// Função Recursiva para o movimento da Rainha (combinando Torre e Bispo)
+void movimentoRainha(int x, int y, int direcaoX, int direcaoY, int tabuleiro[TAM][TAM]) {
+    if (x < 0 || x >= TAM || y < 0 || y >= TAM || tabuleiro[x][y] == 1)
+        return;
 
-    // Movimento horizontal para a direita
-    printf("Movimento da Rainha (Horizontal para direita):\n");
-    do {
-        printf("Casa %d, %d\n", 1, i);
-        i++;
-    } while(i <= 8);
+    // Marca a posição atual como ocupada
+    tabuleiro[x][y] = 1;
+    printf("Rainha em: (%d, %d)\n", x, y);
 
-    i = 1;
+    // Movimentos verticais e horizontais (Torre)
+    if (direcaoX == 0) {
+        movimentoRainha(x, y + 1, direcaoX, direcaoY, tabuleiro);
+    } else if (direcaoY == 0) {
+        movimentoRainha(x + 1, y, direcaoX, direcaoY, tabuleiro);
+    }
 
-    // Movimento vertical para cima
-    printf("\nMovimento da Rainha (Vertical para cima):\n");
-    do {
-        printf("Casa %d, %d\n", i, 1);
-        i++;
-    } while(i <= 8);
-
-    i = 1;
-
-    // Movimento diagonal para cima e direita
-    printf("\nMovimento da Rainha (Diagonal para cima e direita):\n");
-    do {
-        printf("Casa %d, %d\n", i, i);
-        i++;
-    } while(i <= 8);
-
-    i = 1;
-
-    // Movimento diagonal para baixo e direita
-    printf("\nMovimento da Rainha (Diagonal para baixo e direita):\n");
-    do {
-        printf("Casa %d, %d\n", 9 - i, i);
-        i++;
-    } while(i <= 8);
+    // Movimentos diagonais (Bispo)
+    movimentoRainha(x + direcaoX, y + direcaoY, direcaoX, direcaoY, tabuleiro);
 }
 
-int main() {
-    printf("Simulação do movimento das peças de xadrez:\n\n");
-
-    movimento_torre();
-    movimento_bispo();
-    movimento_rainha();
-
-// Função para simular o movimento do Cavalo
-void mover_cavalo(int x, int y) {
-    printf("Movimento do Cavalo a partir de (%d, %d):\n", x, y);
-
-    // Movimentos possíveis do Cavalo em "L"
+// Função para o movimento do Cavalo utilizando Loops Aninhados
+void movimentoCavalo(int x, int y, int tabuleiro[TAM][TAM]) {
+    int i, j;
     int movimentos[8][2] = {
-        {2, 1}, {2, -1}, {-2, 1}, {-2, -1},  // Movimentos de 2 casas na vertical e 1 na horizontal
-        {1, 2}, {1, -2}, {-1, 2}, {-1, -2}   // Movimentos de 1 casa na vertical e 2 na horizontal
+        {-2, 1}, {-1, 2}, {1, 2}, {2, 1},
+        {2, -1}, {1, -2}, {-1, -2}, {-2, -1}
     };
-
-    // Loop aninhado para percorrer todos os movimentos possíveis
-    for (int i = 0; i < 8; i++) {
-        int novo_x = x + movimentos[i][0];
-        int novo_y = y + movimentos[i][1];
-
-        // Verifica se a nova posição está dentro dos limites do tabuleiro
-        if (novo_x >= 0 && novo_x < TAMANHO_TABULEIRO && novo_y >= 0 && novo_y < TAMANHO_TABULEIRO) {
-            printf("Cavalo move para (%d, %d)\n", novo_x, novo_y);
+    
+    // Loop aninhado para controlar os 8 movimentos possíveis do Cavalo
+    for (i = 0; i < 8; i++) {
+        int novoX = x + movimentos[i][0];
+        int novoY = y + movimentos[i][1];
+        
+        if (novoX >= 0 && novoX < TAM && novoY >= 0 && novoY < TAM) {
+            printf("Cavalo em: (%d, %d)\n", novoX, novoY);
+            tabuleiro[novoX][novoY] = 1;
         }
     }
 }
 
 int main() {
-    int x = 3, y = 3;  // Posição inicial do Cavalo (por exemplo, no centro do tabuleiro)
+    int tabuleiro[TAM][TAM] = {0};
+    int x = 0, y = 0;
 
-    // Movimento do Cavalo
-    mover_cavalo(x, y);
-
+    printf("Movimentos da Torre (direção 1: baixo, 2: esquerda, 3: cima, 4: direita):\n");
+    movimentoTorre(x, y, 1, tabuleiro); // Direção 1: baixo
+    
+    printf("\nMovimentos do Bispo (direção diagonal 1):\n");
+    movimentoBispo(x, y, 1, 1, tabuleiro); // Direção 1,1 para diagonal
+    
+    printf("\nMovimentos da Rainha (direção 1: baixo, 2: direita):\n");
+    movimentoRainha(x, y, 0, 1, tabuleiro); // Movimento para a direita
+    
+    printf("\nMovimentos do Cavalo:\n");
+    movimentoCavalo(x, y, tabuleiro);
+    
     return 0;
 }
- 
+
